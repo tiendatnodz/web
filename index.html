@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎁 Tặng Robux Miễn Phí</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+
+    :root {
+      --bg: #f0f4f8;
+      --card-bg: #ffffff;
+      --text: #1a202c;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+      --input-bg: #f8fafc;
+      --glow: rgba(34, 197, 94, 0.2);
+      --shadow: 0 20px 60px rgba(0,0,0,0.08);
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --border: #334155;
+      --input-bg: #0f172a;
+      --glow: rgba(34, 197, 94, 0.15);
+      --shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.4s ease, color 0.4s ease;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      transition: all 0.4s ease;
+    }
+
+    .input-field {
+      background: var(--input-bg);
+      border: 2px solid var(--border);
+      color: var(--text);
+      transition: all 0.3s ease;
+    }
+
+    .input-field:focus {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 4px var(--glow);
+    }
+
+    .input-field::placeholder {
+      color: var(--text-secondary);
+    }
+
+    /* Toggle Switch */
+    .theme-toggle {
+      width: 60px;
+      height: 30px;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      border-radius: 30px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.4s ease;
+      border: none;
+      padding: 0;
+    }
+
+    [data-theme="dark"] .theme-toggle {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+    }
+
+    .theme-toggle .toggle-ball {
+      width: 24px;
+      height: 24px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    [data-theme="dark"] .theme-toggle .toggle-ball {
+      transform: translateX(30px);
+    }
+
+    /* Robux option cards */
+    .robux-option {
+      background: var(--input-bg);
+      border: 2px solid var(--border);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .robux-option:hover {
+      border-color: #22c55e;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px var(--glow);
+    }
+
+    .robux-option.selected {
+      border-color: #22c55e;
+      background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(34,197,94,0.03));
+      box-shadow: 0 0 0 4px var(--glow);
+    }
+
+    .robux-option.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      background: #22c55e;
+      color: white;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* Button */
+    .btn-primary {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(34,197,94,0.4);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    /* Progress bar */
+    .progress-bar {
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+      height: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e, #4ade80);
+      border-radius: 99px;
+      transition: width 0.3s ease;
+    }
+
+    /* Spinner */
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+      50% { box-shadow: 0 0 0 15px rgba(34,197,94,0); }
+    }
+
+    .animate-in {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .confetti-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      top: -10px;
+      animation: confetti-fall 3s ease-in forwards;
+    }
+
+    @keyframes confetti-fall {
+      to {
+        top: 110%;
+        transform: rotate(720deg);
+      }
+    }
+
+    /* Floating particles background */
+    .particle {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.1;
+      animation: float 15s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      33% { transform: translateY(-30px) rotate(120deg); }
+      66% { transform: translateY(20px) rotate(240deg); }
+    }
+
+    .step-item {
+      color: var(--text-secondary);
+      transition: color 0.3s;
+    }
+    .step-item.active {
+      color: #22c55e;
+    }
+    .step-item.done {
+      color: var(--text);
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center px-4 py-8 relative overflow-x-hidden">
+
+  <!-- Background particles -->
+  <div id="particles"></div>
+
+  <!-- Theme Toggle -->
+  <div class="fixed top-5 right-5 z-50 flex items-center gap-3">
+    <span class="text-sm font-medium" style="color: var(--text-secondary);" id="themeLabel">☀️ Sáng</span>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Chuyển đổi giao diện">
+      <div class="toggle-ball"></div>
+    </button>
+  </div>
+
+  <!-- Logo & Header -->
+  <div class="text-center mb-8 animate-in" style="animation-delay: 0.1s;">
+    <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4" style="background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 10px 30px rgba(34,197,94,0.3);">
+      <span class="text-4xl">💎</span>
+    </div>
+    <h1 class="text-3xl md:text-4xl font-900 tracking-tight mb-2">
+      Tặng <span style="background: linear-gradient(135deg, #22c55e, #4ade80); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Robux</span> Miễn Phí
+    </h1>
+    <p class="text-base" style="color: var(--text-secondary);">Nhập username Roblox của bạn và nhận Robux ngay!</p>
+  </div>
+
+  <!-- Main Card -->
+  <div class="card rounded-3xl p-6 md:p-8 w-full max-w-md animate-in" style="animation-delay: 0.2s;" id="mainCard">
+
+    <!-- Steps Indicator -->
+    <div class="flex items-center justify-between mb-8 px-2">
+      <div class="step-item active flex flex-col items-center gap-1" id="step1">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-current">1</div>
+        <span class="text-xs font-medium">Username</span>
+      </div>
+      <div class="flex-1 h-0.5 mx-2 rounded" style="background: var(--border);"></div>
+      <div class="step-item flex flex-col items-center gap-1" id="step2">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-current">2</div>
+        <span class="text-xs font-medium">Chọn Robux</span>
+      </div>
+      <div class="flex-1 h-0.5 mx-2 rounded" style="background: var(--border);"></div>
+      <div class="step-item flex flex-col items-center gap-1" id="step3">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-current">3</div>
+        <span class="text-xs font-medium">Nhận Robux</span>
+      </div>
+    </div>
+
+    <!-- Step 1: Username -->
+    <div id="panel1">
+      <label class="block text-sm font-semibold mb-2">Tên người dùng Roblox</label>
+      <div class="relative mb-4">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-lg">👤</span>
+        <input
+          type="text"
+          id="username"
+          class="input-field w-full pl-12 pr-4 py-3.5 rounded-xl text-base font-medium outline-none"
+          placeholder="Nhập username của bạn..."
+          autocomplete="off"
+        />
+      </div>
+      <button class="btn-primary w-full py-3.5 rounded-xl text-white font-bold text-base" onclick="goToStep2()">
+        Tiếp tục →
+      </button>
+      <p id="errorMsg" class="text-red-500 text-sm mt-3 text-center hidden">⚠️ Vui lòng nhập username!</p>
+    </div>
+
+    <!-- Step 2: Select Robux -->
+    <div id="panel2" class="hidden">
+      <p class="text-sm mb-1" style="color: var(--text-secondary);">Xin chào,</p>
+      <p class="text-lg font-bold mb-4" id="greetUser"></p>
+
+      <label class="block text-sm font-semibold mb-3">Chọn số lượng Robux</label>
+      <div class="grid grid-cols-2 gap-3 mb-5">
+        <div class="robux-option rounded-xl p-4 text-center" onclick="selectRobux(this, 100)">
+          <div class="text-2xl mb-1">💰</div>
+          <div class="font-800 text-xl">100</div>
+          <div class="text-xs mt-0.5" style="color: var(--text-secondary);">Robux</div>
+        </div>
+        <div class="robux-option rounded-xl p-4 text-center" onclick="selectRobux(this, 500)">
+          <div class="text-2xl mb-1">💎</div>
+          <div class="font-800 text-xl">500</div>
+          <div class="text-xs mt-0.5" style="color: var(--text-secondary);">Robux</div>
+        </div>
+        <div class="robux-option rounded-xl p-4 text-center" onclick="selectRobux(this, 1000)">
+          <div class="text-2xl mb-1">🏆</div>
+          <div class="font-800 text-xl">1,000</div>
+          <div class="text-xs mt-0.5" style="color: var(--text-secondary);">Robux</div>
+        </div>
+        <div class="robux-option rounded-xl p-4 text-center" onclick="selectRobux(this, 5000)">
+          <div class="text-2xl mb-1">👑</div>
+          <div class="font-800 text-xl">5,000</div>
+          <div class="text-xs mt-0.5" style="color: var(--text-secondary);">Robux</div>
+        </div>
+      </div>
+      <button class="btn-primary w-full py-3.5 rounded-xl text-white font-bold text-base" id="btnGenerate" onclick="goToStep3()" disabled>
+        Nhận Robux 🎁
+      </button>
+      <button class="w-full py-2.5 rounded-xl font-medium text-sm mt-2" style="color: var(--text-secondary);" onclick="backToStep1()">
+        ← Quay lại
+      </button>
+      <p id="errorMsg2" class="text-red-500 text-sm mt-3 text-center hidden">⚠️ Vui lòng chọn số lượng Robux!</p>
+    </div>
+
+    <!-- Step 3: Processing & Result -->
+    <div id="panel3" class="hidden">
+      <!-- Processing -->
+      <div id="processing" class="text-center py-4">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style="background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(34,197,94,0.05)); animation: pulse-glow 2s infinite;">
+          <div class="spinner" style="width:30px;height:30px;border-width:4px;border-color:rgba(34,197,94,0.2);border-top-color:#22c55e;"></div>
+        </div>
+        <p class="font-bold text-lg mb-1">Đang xử lý...</p>
+        <p class="text-sm mb-4" style="color: var(--text-secondary);" id="processText">Đang kết nối với máy chủ Roblox...</p>
+        <div class="progress-bar mb-2">
+          <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+        </div>
+        <p class="text-xs" style="color: var(--text-secondary);" id="progressPercent">0%</p>
+      </div>
+
+      <!-- Success -->
+      <div id="success" class="text-center py-4 hidden">
+        <div class="text-6xl mb-4">🎉</div>
+        <h2 class="text-2xl font-800 mb-2" style="background: linear-gradient(135deg, #22c55e, #4ade80); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Thành công!</h2>
+        <p class="text-sm mb-4" style="color: var(--text-secondary);">
+          <span id="resultAmount" class="font-bold" style="color: #22c55e;"></span> Robux đã được gửi đến tài khoản
+          <span class="font-bold" id="resultUser" style="color: var(--text);"></span>
+        </p>
+        <div class="card rounded-xl p-4 mb-5" style="background: var(--input-bg);">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm" style="color: var(--text-secondary);">Mã giao dịch</span>
+            <span class="text-sm font-mono font-bold" id="txId"></span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm" style="color: var(--text-secondary);">Trạng thái</span>
+            <span class="text-sm font-bold" style="color: #22c55e;">✅ Hoàn tất</span>
+          </div>
+        </div>
+        <button class="btn-primary w-full py-3.5 rounded-xl text-white font-bold text-base" onclick="resetAll()">
+          Nhận thêm Robux 🔄
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="mt-8 text-center animate-in" style="animation-delay: 0.3s;">
+    <p class="text-xs" style="color: var(--text-secondary);">
+      ⚡ Đã có <span class="font-bold" style="color: #22c55e;" id="userCount">1,284,573</span> người nhận Robux thành công
+    </p>
+    <p class="text-xs mt-1" style="color: var(--text-secondary);">
+      🔒 An toàn & Bảo mật 100%
+    </p>
+  </div>
+
+  <!-- Confetti container -->
+  <div class="confetti-container" id="confettiContainer"></div>
+
+  <script>
+    // =========== Theme Toggle ===========
+    function toggleTheme() {
+      const html = document.documentElement;
+      const label = document.getElementById('themeLabel');
+      if (html.getAttribute('data-theme') === 'light') {
+        html.setAttribute('data-theme', 'dark');
+        label.textContent = '🌙 Tối';
+      } else {
+        html.setAttribute('data-theme', 'light');
+        label.textContent = '☀️ Sáng';
+      }
+    }
+
+    // =========== State ===========
+    let selectedRobux = 0;
+
+    // =========== Step Navigation ===========
+    function goToStep2() {
+      const username = document.getElementById('username').value.trim();
+      if (!username) {
+        document.getElementById('errorMsg').classList.remove('hidden');
+        document.getElementById('username').style.borderColor = '#ef4444';
+        return;
+      }
+      document.getElementById('errorMsg').classList.add('hidden');
+      document.getElementById('username').style.borderColor = '';
+
+      document.getElementById('greetUser').textContent = '🎮 ' + username;
+      document.getElementById('panel1').classList.add('hidden');
+      document.getElementById('panel2').classList.remove('hidden');
+
+      // Update steps
+      document.getElementById('step1').classList.remove('active');
+      document.getElementById('step1').classList.add('done');
+      document.getElementById('step2').classList.add('active');
+    }
+
+    function backToStep1() {
+      document.getElementById('panel2').classList.add('hidden');
+      document.getElementById('panel1').classList.remove('hidden');
+      selectedRobux = 0;
+
+      document.getElementById('step1').classList.add('active');
+      document.getElementById('step1').classList.remove('done');
+      document.getElementById('step2').classList.remove('active');
+    }
+
+    function selectRobux(el, amount) {
+      selectedRobux = amount;
+      document.querySelectorAll('.robux-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      document.getElementById('btnGenerate').disabled = false;
+      document.getElementById('errorMsg2').classList.add('hidden');
+    }
+
+    function goToStep3() {
+      if (!selectedRobux) {
+        document.getElementById('errorMsg2').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('panel2').classList.add('hidden');
+      document.getElementById('panel3').classList.remove('hidden');
+      document.getElementById('processing').classList.remove('hidden');
+      document.getElementById('success').classList.add('hidden');
+
+      // Update steps
+      document.getElementById('step2').classList.remove('active');
+      document.getElementById('step2').classList.add('done');
+      document.getElementById('step3').classList.add('active');
+
+      simulateProgress();
+    }
+
+    // =========== Progress Simulation ===========
+    const processMessages = [
+      'Đang kết nối với máy chủ Roblox...',
+      'Đang xác minh tài khoản...',
+      'Đang tạo giao dịch Robux...',
+      'Đang chuyển Robux vào tài khoản...',
+      'Đang hoàn tất giao dịch...',
+    ];
+
+    function simulateProgress() {
+      let progress = 0;
+      const fill = document.getElementById('progressFill');
+      const percent = document.getElementById('progressPercent');
+      const text = document.getElementById('processText');
+      let msgIndex = 0;
+
+      const interval = setInterval(() => {
+        progress += Math.random() * 8 + 2;
+        if (progress > 100) progress = 100;
+
+        fill.style.width = progress + '%';
+        percent.textContent = Math.floor(progress) + '%';
+
+        const newMsgIndex = Math.min(Math.floor(progress / 22), processMessages.length - 1);
+        if (newMsgIndex !== msgIndex) {
+          msgIndex = newMsgIndex;
+          text.textContent = processMessages[msgIndex];
+        }
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          setTimeout(showSuccess, 500);
+        }
+      }, 200);
+    }
+
+    // =========== Success ===========
+    function showSuccess() {
+      document.getElementById('processing').classList.add('hidden');
+      document.getElementById('success').classList.remove('hidden');
+
+      const username = document.getElementById('username').value.trim();
+      document.getElementById('resultUser').textContent = username;
+      document.getElementById('resultAmount').textContent = selectedRobux.toLocaleString();
+      document.getElementById('txId').textContent = 'RBX-' + generateTxId();
+
+      document.getElementById('step3').classList.remove('active');
+      document.getElementById('step3').classList.add('done');
+
+      launchConfetti();
+    }
+
+    function generateTxId() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let id = '';
+      for (let i = 0; i < 8; i++) id += chars.charAt(Math.floor(Math.random() * chars.length));
+      return id;
+    }
+
+    // =========== Reset ===========
+    function resetAll() {
+      selectedRobux = 0;
+      document.getElementById('username').value = '';
+      document.querySelectorAll('.robux-option').forEach(o => o.classList.remove('selected'));
+      document.getElementById('btnGenerate').disabled = true;
+
+      document.getElementById('panel3').classList.add('hidden');
+      document.getElementById('panel1').classList.remove('hidden');
+
+      document.getElementById('progressFill').style.width = '0%';
+      document.getElementById('progressPercent').textContent = '0%';
+      document.getElementById('processText').textContent = processMessages[0];
+
+      // Reset steps
+      document.getElementById('step1').classList.add('active');
+      document.getElementById('step1').classList.remove('done');
+      document.getElementById('step2').classList.remove('active', 'done');
+      document.getElementById('step3').classList.remove('active', 'done');
+    }
+
+    // =========== Confetti ===========
+    function launchConfetti() {
+      const container = document.getElementById('confettiContainer');
+      const colors = ['#22c55e', '#4ade80', '#fbbf24', '#f472b6', '#818cf8', '#fb923c', '#38bdf8'];
+
+      for (let i = 0; i < 80; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.width = (Math.random() * 8 + 5) + 'px';
+        confetti.style.height = (Math.random() * 8 + 5) + 'px';
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        confetti.style.animationDelay = (Math.random() * 1) + 's';
+        container.appendChild(confetti);
+      }
+
+      setTimeout(() => { container.innerHTML = ''; }, 4000);
+    }
+
+    // =========== Background Particles ===========
+    function createParticles() {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 6; i++) {
+        const p = document.createElement('div');
+        p.classList.add('particle');
+        p.style.width = (Math.random() * 200 + 80) + 'px';
+        p.style.height = p.style.width;
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = Math.random() * 100 + '%';
+        p.style.background = `radial-gradient(circle, #22c55e, transparent)`;
+        p.style.animationDelay = (Math.random() * 5) + 's';
+        container.appendChild(p);
+      }
+    }
+    createParticles();
+
+    // =========== Counter animation ===========
+    const counterEl = document.getElementById('userCount');
+    let count = 1284573;
+    setInterval(() => {
+      count += Math.floor(Math.random() * 3) + 1;
+      counterEl.textContent = count.toLocaleString();
+    }, 3000);
+
+    // Enter key support
+    document.getElementById('username').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') goToStep2();
+    });
+  </script>
+</body>
+</html>
